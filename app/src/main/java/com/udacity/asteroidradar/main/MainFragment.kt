@@ -20,8 +20,14 @@ class MainFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        setHasOptionsMenu(true)
+        //todo: setup list of asteroid items in a list adapter
+        binding.asteroidRecycler.adapter = AsteroidListAdapter(AsteroidListAdapter.OnClickListener {
+            //viewModel.displayAsteroid(it)
+        })
 
+        //todo: setup navigation
+
+        setHasOptionsMenu(true)
         return binding.root
     }
 
