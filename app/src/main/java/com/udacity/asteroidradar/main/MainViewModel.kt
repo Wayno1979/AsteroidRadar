@@ -15,12 +15,12 @@ class MainViewModel(application: Application)  : AndroidViewModel(application) {
     private val asteroidsRepository = AsteroidsRepository(database)
     val asteroids = asteroidsRepository.asteroids
 
-    private val _pictureOfDay = MutableLiveData<PictureOfDay>()
-    val pictureOfDay: LiveData<PictureOfDay>
+    private val _pictureOfDay = MutableLiveData<PictureOfDay?>()
+    val pictureOfDay: MutableLiveData<PictureOfDay?>
         get() = _pictureOfDay
 
-    private val _navigateToSelectedAsteroid = MutableLiveData<Asteroid>()
-    val navigateToSelectedAsteroid: LiveData<Asteroid>
+    private val _navigateToSelectedAsteroid = MutableLiveData<Asteroid?>()
+    val navigateToSelectedAsteroid: MutableLiveData<Asteroid?>
         get() = _navigateToSelectedAsteroid
 
     init {
