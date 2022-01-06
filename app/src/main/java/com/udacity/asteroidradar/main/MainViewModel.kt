@@ -1,24 +1,19 @@
 package com.udacity.asteroidradar.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.PictureOfDay
-import com.udacity.asteroidradar.api.AsteroidsApi
+import com.udacity.asteroidradar.database.AsteroidsDatabase.Companion.getInstance
+import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application)  : AndroidViewModel(application) {
 
-    enum class AsteroidApiStatus { LOADING, ERROR, DONE }
-
-    private val _status = MutableLiveData<AsteroidApiStatus>()
-
-    private val _asteroids = MutableLiveData<List<Asteroid>>()
-    val asteroids: LiveData<List<Asteroid>>
-        get() = _asteroids
+    private val database = getInstance(application)
+    private val asteroidsRepository = AsteroidsRepository(database)
+    val asteroids = asteroidsRepository.asteroids
 
     private val _pictureOfDay = MutableLiveData<PictureOfDay>()
     val pictureOfDay: LiveData<PictureOfDay>
@@ -28,9 +23,6 @@ class MainViewModel : ViewModel() {
     val navigateToSelectedAsteroid: LiveData<Asteroid>
         get() = _navigateToSelectedAsteroid
 
-    //todo: database
-    //todo: repository
-
     init {
         getListOfAsteroids()
         getPictureOfDay()
@@ -38,24 +30,14 @@ class MainViewModel : ViewModel() {
 
     private fun getListOfAsteroids() {
         viewModelScope.launch {
-            _status.value = AsteroidApiStatus.LOADING
-            try {
-                val asteroidsList = AsteroidsApi.getAsteroidList()
-                if (asteroidsList.isNotEmpty()) {
-                    _asteroids.value = asteroidsList
-                }
-                _status.value = AsteroidApiStatus.DONE
-            } catch (e: Exception){
-                _status.value = AsteroidApiStatus.ERROR
-                _asteroids.value = ArrayList()
-            }
+            asteroidsRepository.getAllAsteroids()
         }
     }
 
     private fun getPictureOfDay() {
         viewModelScope.launch {
             try {
-                _pictureOfDay.value = AsteroidsApi.getPictureOfTheDay()
+                _pictureOfDay.value = asteroidsRepository.getPictureOfTheDay()
             } catch (e: Exception) {
                 _pictureOfDay.value = null
             }
