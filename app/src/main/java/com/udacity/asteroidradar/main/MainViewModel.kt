@@ -3,6 +3,7 @@ package com.udacity.asteroidradar.main
 import android.app.Application
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.DataFilter
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.database.AsteroidsDatabase.Companion.getInstance
 import com.udacity.asteroidradar.repository.AsteroidsRepository
@@ -42,6 +43,10 @@ class MainViewModel(application: Application)  : AndroidViewModel(application) {
                 _pictureOfDay.value = null
             }
         }
+    }
+
+    fun onFilterChanged(dataFilter: DataFilter) {
+        //todo: implement filter in repository
     }
 
     fun displayAsteroidDetails(asteroid: Asteroid) {
