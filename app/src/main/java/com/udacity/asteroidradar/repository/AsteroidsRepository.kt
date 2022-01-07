@@ -7,6 +7,7 @@ import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.DataFilter
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidsApi
+import com.udacity.asteroidradar.api.getTodaysDateFormatted
 import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.database.asAsteroid
 import com.udacity.asteroidradar.database.asDatabaseAsteroid
@@ -27,7 +28,7 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
                 }
 
             DataFilter.TODAY ->
-                Transformations.map(database.asteroidDatabaseDao.getAllAsteroids()){ dbAsteroid ->
+                Transformations.map(database.asteroidDatabaseDao.getTodaysAsteroids(getTodaysDateFormatted())){ dbAsteroid ->
                     dbAsteroid.asAsteroid()
                 }
 
