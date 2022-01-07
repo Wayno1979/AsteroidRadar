@@ -3,7 +3,7 @@ package com.udacity.asteroidradar.api
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Constants.API_KEY
+import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants.BASE_URL
 import com.udacity.asteroidradar.PictureOfDay
 import org.json.JSONObject
@@ -32,18 +32,20 @@ interface IAsteroidsApiService {
 }
 
 object AsteroidsApi {
+
+    private val nasaApiKey = BuildConfig.NASA_API_KEY
+
     private val retrofitService : IAsteroidsApiService by lazy {
         retrofit.create(IAsteroidsApiService::class.java)
     }
 
     suspend fun getAsteroidList() : List<Asteroid> {
-        //val response = retrofitService.getAsteroids("","", API_KEY)
-        val response = retrofitService.getAsteroids(API_KEY)
+        val response = retrofitService.getAsteroids(nasaApiKey)
         val jsonObject = JSONObject(response)
         return parseAsteroidsJsonResult(jsonObject)
     }
 
     suspend fun getPictureOfTheDay() : PictureOfDay {
-        return retrofitService.getPictureOfDay(API_KEY)
+        return retrofitService.getPictureOfDay(nasaApiKey)
     }
 }
