@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.DataFilter
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidsApi
 import com.udacity.asteroidradar.database.AsteroidsDatabase
@@ -14,10 +15,28 @@ import kotlinx.coroutines.withContext
 
 class AsteroidsRepository(private val database: AsteroidsDatabase) {
 
-    val asteroids: LiveData<List<Asteroid>> = Transformations.map(
-        database.asteroidDatabaseDao.getAllAsteroids()) {
-            it.asAsteroid()
+    private val _dataFilter = MutableLiveData(DataFilter.WEEKLY)
+    private val dataFilter : LiveData<DataFilter>
+        get() = _dataFilter
+
+    val asteroids : LiveData<List<Asteroid>> = Transformations.switchMap(dataFilter) { filter ->
+        when(filter){
+            DataFilter.WEEKLY ->
+                Transformations.map(database.asteroidDatabaseDao.getAllAsteroids()){ dbAsteroid ->
+                    dbAsteroid.asAsteroid()
+                }
+
+            DataFilter.TODAY ->
+                Transformations.map(database.asteroidDatabaseDao.getAllAsteroids()){ dbAsteroid ->
+                    dbAsteroid.asAsteroid()
+                }
+
+            DataFilter.SAVED ->
+                Transformations.map(database.asteroidDatabaseDao.getAllAsteroids()){ dbAsteroid ->
+                    dbAsteroid.asAsteroid()
+                }
         }
+    }
 
     suspend fun getAllAsteroids() {
         withContext(Dispatchers.IO) {
@@ -32,5 +51,9 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
             pictureOfTheDay = AsteroidsApi.getPictureOfTheDay()
         }
         return pictureOfTheDay
+    }
+
+    fun updateFilter(dataFilter: DataFilter){
+        _dataFilter.value = dataFilter
     }
 }

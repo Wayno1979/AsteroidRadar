@@ -46,7 +46,7 @@ class MainViewModel(application: Application)  : AndroidViewModel(application) {
     }
 
     fun onFilterChanged(dataFilter: DataFilter) {
-        //todo: implement filter in repository
+        asteroidsRepository.updateFilter(dataFilter)
     }
 
     fun displayAsteroidDetails(asteroid: Asteroid) {
